@@ -382,18 +382,31 @@ def grafico_eficiencia_servico(df):
     return fig
 
 def grafico_produtos_municipio(df_comex):
-    """Hipótese 12 - Produtos mais exportados por município"""
-    produtos_mun = df_comex.groupby(['Município', 'Descrição Seção'])[
-        'Exportação - 2024 - Valor US$ FOB'].sum().sort_values(ascending=False).head(10)
+    """Hipótese 6 - Produtos mais exportados por município"""
+    produtos_mun = (
+        df_comex
+        .groupby(['Município', 'Descrição Seção'])['Exportação - 2024 - Valor US$ FOB']
+        .sum()
+        .sort_values(ascending=False)
+        .head(10)
+    )
     
     fig = px.bar(
         x=produtos_mun.values,
-        y=[f"{idx[0]} - {idx[1]}" for idx in produtos_mun.index],
+        y=[f"{idx[0]} – {idx[1]}" for idx in produtos_mun.index],
         orientation='h',
         title="Top 10 Produtos mais Exportados por Município (2024)",
-        labels={'x': 'Valor FOB (US$)', 'y': 'Município - Produto'},
-        color_discrete_sequence=['purple']
+        labels={'x': 'Valor FOB (US$)', 'y': ''},
+        color_discrete_sequence=['purple'],
+        height=600,
     )
+
+    fig.update_traces(showlegend=False)
+    fig.update_layout(
+        margin=dict(l=100, r=20, t=60, b=40),
+    )
+    fig.update_yaxes(showticklabels=False)
+
     return fig
 
 def grafico_concentracao_pais(df_comex):
@@ -412,16 +425,30 @@ def grafico_concentracao_pais(df_comex):
     return fig, pct.head(3).sum()
 
 def grafico_valor_fob_kg(df_comex):
-    """Hipótese 15 - Produtos com Maior Valor FOB/kg"""
+    """Hipótese 8 - Produtos com Maior Valor FOB/kg"""
     valiosos = df_comex[df_comex['FOB_2024_por_kg'] > 50]
-    top_valiosos = valiosos.groupby('Descrição Seção')['FOB_2024_por_kg'].mean().sort_values(ascending=False).head(10)
+    top_valiosos = (
+        valiosos
+        .groupby('Descrição Seção')['FOB_2024_por_kg']
+        .mean()
+        .sort_values(ascending=False)
+        .head(10)
+    )
     
     fig = px.bar(
         x=top_valiosos.values,
         y=top_valiosos.index,
         orientation='h',
         title="Top 10 Seções com Maior Valor FOB/kg (> US$ 50)",
-        labels={'x': 'Valor FOB médio por kg (US$)', 'y': 'Seção'},
-        color_discrete_sequence=['darkgreen']
+        labels={'x': 'Valor FOB médio por kg (US$)', 'y': ''},
+        color_discrete_sequence=['darkgreen'],
+        height=600,
     )
+
+    fig.update_traces(showlegend=False)
+    fig.update_layout(
+        margin=dict(l=100, r=20, t=60, b=40),
+    )
+    fig.update_yaxes(showticklabels=False)
+
     return fig
